@@ -22,7 +22,7 @@ void DynamicProg::DynamicTSP(Graph* newGraphData)
 
 	// 0->1 0->2 0->3... 0->(mSize-1)
 	for (int i = 0; i < matrixSize; i++) {
-		// 1<<i miasto do, +1 miasto z(pocz¹tkowe, 0) 
+		// 1<<i miasto do,  miasto z(pocz¹tkowe, 0) 
 		btab[(1 << i) | 1][i] = newGraphData->getValueOfEdge(0, i);
 		wtfrom[(1 << i) | 1][i] = 0;//
 		//w 0 0 jest -1

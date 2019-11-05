@@ -17,7 +17,7 @@ void pomiar_czasu() {
 	std::chrono::duration<double> diff = endTest - startTest;
 }
 void bforceTest();
-void BranchAndBoundTest2(Graph* myGraph);
+void BranchAndBoundTest2();
 void testWczytania(Graph* myGraph);
 
 void lastTestBF() {
@@ -85,13 +85,16 @@ void lastTestBranchAndBound() {
 	}
 }
 
-void toExcel() {
+void toExcel(std::string fileInputName) {
 	//----------miniProgram---------------------//
 	std::fstream wyniki;
 	std::fstream wynikiCor;
 	std::string  dataRow;
-	wynikiCor.open("wynikiCor.txt", std::ios::out);
-	wyniki.open("wyniki.txt", std::ios::in);
+	std::string fileOutputName = fileInputName;
+	std::string tempEx = "EX.txt";
+	fileOutputName.append(tempEx);
+	wynikiCor.open(fileOutputName, std::ios::out);
+	wyniki.open(fileInputName, std::ios::in);
 	if (wynikiCor.good() && wyniki.good()) {
 		for (int i = 0; i < 100; i++) {
 			std::getline(wyniki, dataRow);
@@ -112,6 +115,36 @@ void toExcel() {
 		wynikiCor.close();
 	}
 	//------------------------------------------------
+}
+void bigConvertToExcel() {
+	std::string strTab[14] = { 
+	/*"WynikiBF0.txt",
+	"WynikiBF1.txt" ,
+	"WynikiBF2.txt" ,
+	"WynikiBF3.txt" ,
+	"WynikiBF4.txt" ,
+	"WynikiBF5.txt" ,
+	"WynikiBF6.txt" ,*/
+
+	"WynikiBNB0.txt" ,
+	"WynikiBNB1.txt" ,
+	"WynikiBNB2.txt" ,
+	"WynikiBNB3.txt" ,
+	"WynikiBNB4.txt" ,
+	"WynikiBNB5.txt" ,
+	"WynikiBNB6.txt" ,
+
+	"WynikiDynamic0.txt",
+	"WynikiDynamic1.txt",
+	"WynikiDynamic2.txt",
+	"WynikiDynamic3.txt",
+	"WynikiDynamic4.txt",
+	"WynikiDynamic5.txt",
+	"WynikiDynamic6.txt",
+	};
+	for (int i = 0; i < 14; i++) {
+		toExcel(strTab[i]);
+	}
 }
 
 void bigSimulationBF() {
@@ -149,7 +182,7 @@ void bigSimulationBF() {
 void bigSimulationDynamicProg() {
 	Graph* testGraph = new Graph(10);
 	DynamicProg* testDynamicProg = new DynamicProg();
-	int tab[7] = { 7,8,9,10,11,12,17 };
+	int tab[7] = { 15,16,17,18,19,20,21 };
 	int tempProblem = 0;
 	for (int j = 0; j < 7; j++) {
 		tempProblem = tab[j];
@@ -181,7 +214,7 @@ void bigSimulationDynamicProg() {
 void bigSimulationBranchAndBound() {
 	Graph* testGraph = new Graph(10);
 	Branch2* testBranch2 = new Branch2();
-	int tab[7] = { 6,7,8,9,10,11,12 };
+	int tab[7] = { 15,16,17,18,19,20,21 };
 	int tempProblem = 0;
 	for (int j = 0; j < 7; j++) {
 		tempProblem = tab[j];
@@ -235,17 +268,30 @@ void mainMenu() {
 		std::cout << "Wybierz opcje :\n"
 			<< "0. Zakoncz program\n"
 			<< "1. Wejdz w tryb Testowy\n"
-			<< "2. Wejdz w tryb Sprawdzanie\n";
+			<< "2. Wejdz w tryb Sprawdzanie\n"
+			<< "3.Przeksztalc wyniki\n";
 		std::cin >> userInput;
 		switch (userInput) {
+		case 3:
+			std::cout << "Zaczynam convert...\n";
+			bigConvertToExcel();
+			std::cout << "Koncze convert!\n";
+			break;
 		case 0:
 			break;
 		case 1:
 			//testy
 			std::cout << "rozpoczynam wielkie testy...\n";
 			//bigSimulationBF();
-			bigSimulationDynamicProg();
+			//bigSimulationDynamicProg();
 			//bigSimulationBranchAndBound();
+			BranchAndBoundTest2();
+			BranchAndBoundTest2();
+			BranchAndBoundTest2();
+			BranchAndBoundTest2();
+			BranchAndBoundTest2();
+			BranchAndBoundTest2();
+			BranchAndBoundTest2();
 			std::cout << "koncze wielkie testy!!!!\n";
 			break;
 		case 2:
@@ -401,9 +447,11 @@ void mainMenu() {
 			}
 			userInput = 999;
 			break;
+
 		}
 	}
 }
+
 void testWczytania(Graph* myGraph) {
 	myGraph->loadGraphFromFile();
 	myGraph->printGraph();
@@ -414,13 +462,13 @@ void testWczytania(Graph* myGraph) {
 }
 
 
-void BranchAndBoundTest2(Graph * myGraph) {
-	//Graph* myGraph = new Graph(3);
-	//myGraph->loadGraphFromFile();
+void BranchAndBoundTest2() {
+	Graph* myGraph = new Graph(3);
+	myGraph->loadGraphFromFile();
 	Branch2* test = new Branch2();
 	test->startAlgorithm(myGraph);
+	test->printResult();
 }
-
 
 void bforceTest() {
 	Graph* myGraph = new Graph(3);

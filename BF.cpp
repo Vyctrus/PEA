@@ -5,7 +5,6 @@ BF::~BF()
 	delete[] resultPermut;
 	delete[] permuTab;
 	delete[] visited;
-	//delete myGraph;
 }
 
 void BF::brutForce(int v)
@@ -37,7 +36,7 @@ void BF::brutForce(int v)
 		}
 		activeCostOfPermut -= myGraph->getValueOfEdge(v, startVert);
 	}
-	currentSize--;//!!!!!!!!!cofamy siê w tablicy- wracamy poprawiac te ktore do tej pory byly ustalone
+	currentSize--;//!cofamy siê w tablicy- wracamy poprawiac te ktore do tej pory byly ustalone
 }
 
 void BF::intitialBrutForce(Graph* newGraphData)
@@ -46,17 +45,15 @@ void BF::intitialBrutForce(Graph* newGraphData)
 	resultPermut = new int[matrixSize];
 	permuTab = new int[matrixSize];
 	visited = new bool[matrixSize];
-	//W = new int* [n];
 	myGraph = newGraphData;
-	//std::cout << "Drukuje dane wczytanego grafu:"<<std::endl;
-	//myGraph->printGraph();
 	for (int i = 0; i < matrixSize; i++)
 	{
 		visited[i] = false;
 	}
 	currentSize = 0;
 	minCostResult = 99999;
-	activeCostOfPermut = startVert = 0;
+	activeCostOfPermut = 0;
+	startVert = 0;
 	brutForce(startVert);//zaczynamy od 0 nie tracac ogolnosci zalozen bo i tak chodzi nam o cykl- nie ma poczatku ani konca
 
 }
@@ -64,7 +61,8 @@ void BF::intitialBrutForce(Graph* newGraphData)
 void BF::printResult()
 {
 	//sekcja wyswietlania
-	for (int i = 0; i < matrixSize; i++) std::cout << resultPermut[i] << "-->";
+	for (int i = 0; i < matrixSize; i++) 
+		std::cout << resultPermut[i] << "-->";
 	std::cout << startVert << std::endl;
 	std::cout << "Koszt drogi = " << minCostResult << std::endl;
 }

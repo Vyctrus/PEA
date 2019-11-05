@@ -25,7 +25,7 @@ void Branch2::brutForce(int v)
 					//std::cout << "odcinam\n";
 				}
 				else {
-					if ( activeCostOfPermut <= upperBound) {
+					if ( true) { //activeCostOfPermut <= upperBound
 						//jesli znajdujemy sie w przedziale miedzy boundami to szukamy dalej
 						//std::cout << "rekurencja" << std::endl;
 						brutForce(u);	//rekurencja
