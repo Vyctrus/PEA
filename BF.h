@@ -15,6 +15,7 @@ public:
 	~BF();
 	void brutForce(int v);
 	void intitialBrutForce(Graph* newGraphData);
+	void printResult();
 
 };
 

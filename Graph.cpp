@@ -3,6 +3,7 @@
 #include <time.h>
 #include<iostream>
 #include <fstream>
+#include <windows.h>
 
 using namespace std;
 
@@ -38,8 +39,10 @@ Graph::~Graph()
 
 void Graph::createRandomGraph()
 {
-	int maxValue = 10;
-	srand(time(NULL));
+	//lastTime = (lastTime + 1) % (1<<30);
+	
+	int maxValue = 100;
+	srand(GetTickCount64());// samo srnad() nie wystarczalo aby szybko generowac inne wartosci dla malych problemow time(NULL)
 	
 	for (int i = 0; i < numbOfVerts; i++) {
 		for (int j = 0; j < numbOfVerts; j++) {
@@ -47,6 +50,18 @@ void Graph::createRandomGraph()
 		}
 	}
 	
+}
+
+void Graph::createRandomGraph(int addSmth)
+{
+	int maxValue = 100;
+	srand(GetTickCount64()+addSmth);// samo srnad() nie wystarczalo aby szybko generowac inne wartosci dla malych problemow time(NULL)
+
+	for (int i = 0; i < numbOfVerts; i++) {
+		for (int j = 0; j < numbOfVerts; j++) {
+			matrix[i][j] = rand() % maxValue;
+		}
+	}
 }
 
 void Graph::loadGraphFromFile()

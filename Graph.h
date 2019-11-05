@@ -10,6 +10,7 @@ class Graph//projected as matrix buddy
 		Graph(int numberOfVerticles);
 		~Graph();
 		void createRandomGraph();
+		void createRandomGraph(int addSmth);
 
 		void loadGraphFromFile();
 		void saveToFile();

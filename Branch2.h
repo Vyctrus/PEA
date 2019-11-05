@@ -17,6 +17,7 @@ public:
 	~Branch2();
 	void brutForce(int v);
 	void startAlgorithm(Graph* newGraphData);
+	void printResult();
 
 	int findMinimumFor(int verticle);//zawsze sprawdza OD
 	void startMinimus();//do tablicy wpisuje minimalne wyjscia(OD) danego wierzcholka

@@ -3,10 +3,10 @@
 
 void DynamicProg::DynamicTSP(Graph* newGraphData)
 {
-	int matrixSize = newGraphData->getNumbOfVerts();
-	int** btab;
-	int** wtfrom;
-	int bitPathSize = (1 << matrixSize);
+	matrixSize = newGraphData->getNumbOfVerts();
+	//int** btab;
+	//int** wtfrom;
+	bitPathSize = (1 << matrixSize);
 	btab = new int* [bitPathSize];// 1<<matrixSize  zeby pomiescic informacje w postaci bitowej(1010101)
 	wtfrom = new int* [bitPathSize];
 
@@ -42,14 +42,14 @@ void DynamicProg::DynamicTSP(Graph* newGraphData)
 				for (int i = 0; i < matrixSize; i++) {
 					//szukaj wsrod wszystkich ktore jeszcze mozesz dolaczyc
 					if (bitPath & (1 << i)) {
-						//juz to mamy(tego juz nei dolaczysz)
+						//juz to mamy(tego juz nie dolaczysz)
 					}
 					else {
 						//nie ma i w sciezce a ev jest czyli tutaj nawet ujemne na srodku mog¹ byc
 						//		aktualne value + dojscie do i z ev-specyzowane skad			<	value dla wierzcholka i dla sciezki zawierajacej takie miasta
 						if ((btab[bitPath][ev] + newGraphData->getValueOfEdge(ev, i)) < btab[bitPath|(1<<i)][i]) {
 							//jak to dojscie bedzie optymalne, to je ustaw na optymalne dla tej sciezki
-							// bitPath |(1<<i) to sciezka poszerzona o wierzcholek i
+							// bitPath |(1<<i) to sciezka poszerzona o wierzcholek i- blokuje ponowne uzycie, uzytych elementow
 							btab[bitPath | (1 << i)][i] = (btab[bitPath][ev] + newGraphData->getValueOfEdge(ev, i));
 							wtfrom[bitPath | (1 << i)][i] = ev;
 							//dla danego wierzcholka nalezy zapamietac tez skad
@@ -63,9 +63,9 @@ void DynamicProg::DynamicTSP(Graph* newGraphData)
 
 
 	//zapelniona tablica z optymalnymi dojsciami do poszczegolnych miast
-	int result = (1 << 30);
-	int indexQ = 0;
-	for (int i = 1; i < matrixSize; i++) {//tutaj zmiana po 2ch browarach, sprawdzic potem czy 1 czy zostawic 0
+	result = (1 << 30);
+	lastVerticle = 0;
+	for (int i = 1; i < matrixSize; i++) {// sprawdzic potem czy 1 czy zostawic 0
 		//sprawdzenie po wartosciach sciezek zawierajacych wszystkie elementy
 		//wraz z dodaniem do nich kosztu powrotu-wyszukanie minimum
 		//					"pelne sciezki"				"zapetlenie", powrot
@@ -73,35 +73,64 @@ void DynamicProg::DynamicTSP(Graph* newGraphData)
 		int temp = btab[bitPathSize- 1][i] + (newGraphData->getValueOfEdge(i,0));
 		if (temp < result) {
 			result = temp;
-			indexQ = i;
+			lastVerticle = i;
 		}	
 	}
-	std::cout << "Result : " << result << std::endl;
-
-
+	//std::cout << "Result : " << result << std::endl;
 
 	int mask = (1 << matrixSize) - 1;//full
-	int iter = indexQ;
-	int* myTab;
+	int iter = lastVerticle;
+	//int* myTab;
 	myTab = new int[matrixSize];
 	//myTab[0] = 0;
 	//myTab[matrixSize - 1] = iter;
 	myTab[0] = 0;
 	myTab[matrixSize-1] = iter;
 	for (int k = matrixSize - 2; k >0;k--) {
-		int poprzednikItera= wtfrom[mask][iter];
-		myTab[k] = poprzednikItera;//myTab od : matrixSize - 1 - k
+		int previousThanIter= wtfrom[mask][iter];
+		myTab[k] = previousThanIter;//myTab od : matrixSize - 1 - k
 		//dla poprzednika itera odbierz maske----- wytnij itera z maski
 		mask = mask - (1 << iter);
-		iter = poprzednikItera;
+		iter = previousThanIter;
 	}
 	
+	//std::cout << "Path: ";//<< indexQ;
+	//for (int i = 0; i < matrixSize; i++) {
+	//	std::cout << myTab[i] << "-->";
+	//}
+	//std::cout << "0\n";
+
+
+	////destruktor wanna be-->zamiast wywo³ywaæ delete po kazdym wykonaniu algorytmu algorytm sam czysci to czego juz nie potrzebuje
+	for (int i = 0; i < bitPathSize; i++) {
+		delete[]btab[i];
+		delete[]wtfrom[i];
+	}
+	delete[]btab;
+	delete[]wtfrom;
+	//delete[]myTab;
+}
+
+void DynamicProg::printResult()
+{
+	std::cout << "Result : " << result << std::endl;
+
 	std::cout << "Path: ";//<< indexQ;
-	
 	for (int i = 0; i < matrixSize; i++) {
 		std::cout << myTab[i] << "-->";
 	}
-	std::cout << "\n";
-
-	
+	std::cout << "0\n";
 }
+
+DynamicProg::~DynamicProg()
+{
+	//destruktor wanna be
+	/*for (int i = 0; i < bitPathSize; i++) {
+		delete[]btab[i];
+		delete[]wtfrom[i];
+	}
+	delete[]btab;
+	delete[]wtfrom;*/
+	delete[]myTab;
+}
+

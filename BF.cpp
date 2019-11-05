@@ -14,7 +14,7 @@ void BF::brutForce(int v)
 	permuTab[currentSize++] = v;//permuTab jest zawsze tej samej wielkosci, current size to poprwane zapelnienie
 	if (currentSize < matrixSize)
 	{
-		visited[v] = true;
+		visited[v] = true;// automatycznie sprawdza i!=j
 		for (u = 0; u < matrixSize; u++)
 			if (!visited[u])
 			{
@@ -48,8 +48,8 @@ void BF::intitialBrutForce(Graph* newGraphData)
 	visited = new bool[matrixSize];
 	//W = new int* [n];
 	myGraph = newGraphData;
-	std::cout << "Drukuje dane wczytanego grafu:"<<std::endl;
-	myGraph->printGraph();
+	//std::cout << "Drukuje dane wczytanego grafu:"<<std::endl;
+	//myGraph->printGraph();
 	for (int i = 0; i < matrixSize; i++)
 	{
 		visited[i] = false;
@@ -57,11 +57,15 @@ void BF::intitialBrutForce(Graph* newGraphData)
 	currentSize = 0;
 	minCostResult = 99999;
 	activeCostOfPermut = startVert = 0;
-	brutForce(startVert);
+	brutForce(startVert);//zaczynamy od 0 nie tracac ogolnosci zalozen bo i tak chodzi nam o cykl- nie ma poczatku ani konca
 
+}
+
+void BF::printResult()
+{
 	//sekcja wyswietlania
-	for (int i = 0; i < matrixSize; i++) std::cout << resultPermut[i] << " ";
+	for (int i = 0; i < matrixSize; i++) std::cout << resultPermut[i] << "-->";
 	std::cout << startVert << std::endl;
-	std::cout << "d = " << minCostResult << std::endl;
+	std::cout << "Koszt drogi = " << minCostResult << std::endl;
 }
 

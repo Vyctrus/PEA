@@ -48,7 +48,6 @@ void Branch2::brutForce(int v)
 				resultPermut[u] = permuTab[u];
 		}
 		activeCostOfPermut -= myGraph->getValueOfEdge(v, startVert);
-		//lowerBound = (lowerBound + minimusFrom[v]) - myGraph->getValueOfEdge(v, u);//aktualizacja lowerBound- przywroc poprzednie
 	}
 	currentSize--;//!!!!!!!!!cofamy siê w tablicy- wracamy poprawiac te ktore do tej pory byly ustalone
 }
@@ -77,10 +76,14 @@ void Branch2::startAlgorithm(Graph* newGraphData)
 
 	brutForce(startVert);
 
-	//sekcja wyswietlania
-	for (int i = 0; i < matrixSize; i++) std::cout << resultPermut[i] << " ";
+	//here printin
+}
+
+void Branch2::printResult()
+{//sekcja wyswietlania
+	for (int i = 0; i < matrixSize; i++) std::cout << resultPermut[i] << "-->";
 	std::cout << startVert << std::endl;
-	std::cout << "d = " << minCostResult << std::endl;
+	std::cout << " Koszt = " << minCostResult << std::endl;
 }
 
 int Branch2::findMinimumFor(int verticle)
