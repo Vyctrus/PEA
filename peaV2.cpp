@@ -4,6 +4,7 @@
 #include "BF.h"
 #include "DynamicProg.h"
 
+#include<string>
 #include <iostream>
 #include<fstream>
 #include<ctime>
@@ -83,34 +84,152 @@ void lastTestBranchAndBound() {
 		test->printResult();
 	}
 }
+
+void toExcel() {
+	//----------miniProgram---------------------//
+	std::fstream wyniki;
+	std::fstream wynikiCor;
+	std::string  dataRow;
+	wynikiCor.open("wynikiCor.txt", std::ios::out);
+	wyniki.open("wyniki.txt", std::ios::in);
+	if (wynikiCor.good() && wyniki.good()) {
+		for (int i = 0; i < 100; i++) {
+			std::getline(wyniki, dataRow);
+			int n = dataRow.length();
+			char* chArray = &dataRow[0];
+			for (int k = 0; chArray[k] != '\0'; k++) {
+				if (chArray[k] == 'e') {
+					chArray[k] = 'E';
+				}
+				if (chArray[k] == '.') {
+					chArray[k] = ',';
+				}
+			}
+			std::string str(chArray);
+			wynikiCor << str << std::endl;
+		}
+		wyniki.close();
+		wynikiCor.close();
+	}
+	//------------------------------------------------
+}
+
+void bigSimulationBF() {
+	Graph* testGraph = new Graph(10);
+	BF* testBF = new BF();
+	int tab[7] = { 6,7,8,9,10,11,12 };
+	int tempProblem = 0;
+	for (int j = 0; j < 7; j++) {
+		tempProblem = tab[j];
+		for (int i = 0; i < 100; i++) {
+			testGraph = new Graph(tab[j]);
+			testGraph->createRandomGraph(i);
+			//----
+			auto startTest = std::chrono::high_resolution_clock::now();
+			testBF->intitialBrutForce(testGraph);
+			auto endTest = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> diff = endTest - startTest;
+			std::fstream wyniki;
+			std::string nazwa= "wynikiBF";
+			std::string nazwa2= std::to_string(j);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+
+			wyniki.open(nazwa, std::ios::out | std::ios::app);
+			if (wyniki.good() == true) {
+				wyniki << diff.count() << std::endl;
+				wyniki.close();
+			}
+			//----
+		}
+	}
+}
+
+void bigSimulationDynamicProg() {
+	Graph* testGraph = new Graph(10);
+	DynamicProg* testDynamicProg = new DynamicProg();
+	int tab[7] = { 7,8,9,10,11,12,17 };
+	int tempProblem = 0;
+	for (int j = 0; j < 7; j++) {
+		tempProblem = tab[j];
+		for (int i = 0; i < 100; i++) {
+			testGraph = new Graph(tab[j]);
+			testGraph->createRandomGraph(i);
+			//----
+			auto startTest = std::chrono::high_resolution_clock::now();
+			testDynamicProg->DynamicTSP(testGraph);
+			auto endTest = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> diff = endTest - startTest;
+			std::fstream wyniki;
+			std::string nazwa = "wynikiDynamic";
+			std::string nazwa2 = std::to_string(j);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+
+			wyniki.open(nazwa, std::ios::out | std::ios::app);
+			if (wyniki.good() == true) {
+				wyniki << diff.count() << std::endl;
+				wyniki.close();
+			}
+			//----
+		}
+	}
+}
+
+void bigSimulationBranchAndBound() {
+	Graph* testGraph = new Graph(10);
+	Branch2* testBranch2 = new Branch2();
+	int tab[7] = { 6,7,8,9,10,11,12 };
+	int tempProblem = 0;
+	for (int j = 0; j < 7; j++) {
+		tempProblem = tab[j];
+		for (int i = 0; i < 100; i++) {
+			testGraph = new Graph(tab[j]);
+			testGraph->createRandomGraph(i);
+			//----
+			auto startTest = std::chrono::high_resolution_clock::now();
+			testBranch2->startAlgorithm(testGraph);
+			auto endTest = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> diff = endTest - startTest;
+			std::fstream wyniki;
+			std::string nazwa = "wynikiBNB";
+			std::string nazwa2 = std::to_string(j);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+
+			wyniki.open(nazwa, std::ios::out | std::ios::app);
+			if (wyniki.good() == true) {
+				wyniki << diff.count() << std::endl;
+				wyniki.close();
+			}
+			//----
+		}
+	}
+}
+void mainMenu();
 int main()
 {
 	//Obszar final testow
-	//lastTestBF(); 
+	//lastTestBF(); ok
 	//lastTestDynamic(); ok
-	lastTestBranchAndBound();
+	//lastTestBranchAndBound(); ok
 
-	//test przeciązen
-	//int temp;
-	//Graph* myGraph = new Graph(14);
-	//myGraph->createRandomGraph();
-	//myGraph->printGraph();
-	//std::cin >> temp;
-	//DynamicProg *myDyn = new DynamicProg();
-		
-
-	/*for (int i = 0; i < 100; i++) {
-		myDyn->DynamicTSP(myGraph);
-	}*/
-	std::cout << "Test wczytania\n";
-	Graph* myGraph = new Graph(14);
-	testWczytania(myGraph);
+	mainMenu();
 
 }
 
 
 void mainMenu() {
+	Graph *myGraph = new Graph(10);
+	int size = 0;
 	int userInput = 999;
+	BF* myBF = new BF();
+	DynamicProg* myDynamicProg = new DynamicProg();
+	Branch2* myBranch2 = new Branch2();
+
 	while (userInput != 0) {
 		std::cout << "----Main Menu--------------------\n";
 		std::cout << "Wybierz opcje :\n"
@@ -123,22 +242,164 @@ void mainMenu() {
 			break;
 		case 1:
 			//testy
+			std::cout << "rozpoczynam wielkie testy...\n";
+			//bigSimulationBF();
+			bigSimulationDynamicProg();
+			//bigSimulationBranchAndBound();
+			std::cout << "koncze wielkie testy!!!!\n";
 			break;
 		case 2:
-			std::cout << "-------Menu Sprawdzanie------------------\n";
-			//Sprawdzanie
-			//Laduj graf z pliku
-			//generuj losowy graf
-			//wyswietl graf
-			//cofnij do poprzedniego menu
-			//uzyj algorytmu brut force->menu
-				//wykonaj
-				//wyswietl wynik
-				//wyswietl graf
-				//generuj losowy(int)
-				//laduj z pliku
-			//uzyj algorytmu dynamic programing->menu
-			//uzyj b&b->menu
+			while (userInput != 0) {
+				std::cout << "-------Menu Sprawdzanie------------------\n";
+				std::cout << "Wybierz opcje :\n"
+					<< "0. Wroc do poprzedniego menu \n"
+					<< "1. Laduj graf z pliku\n"
+					<< "2. Generuj losowy graf\n"
+					<< "3. Wyświetl graf\n"
+					<< "4. Przejdz do Brute Force\n"
+					<< "5. Przejdz do Dynamic Programming\n"
+					<< "6. Przejdz do Branch & Bound\n";
+				std::cin >> userInput;
+				switch (userInput)
+				{
+				case 0:
+					break;
+				case 1:
+					myGraph->loadGraphFromFile();
+					break;
+				case 2:
+					std::cout << "Podaj rozmiar grafu: ";
+					std::cin >> size;
+					myGraph = new Graph(size);
+					myGraph->createRandomGraph();
+					break;
+				case 3:
+					myGraph->printGraph();
+					break;
+				case 4:
+					//BruteForce
+						//wykonaj
+						//wyswietl wynik
+						//wyswietl graf
+						//generuj losowy(int)
+						//laduj z pliku
+					while (userInput != 0) {
+						std::cout << "-------Menu Brute Force------------------\n";
+						std::cout << "Wybierz opcje :\n"
+							<< "0. Wroc do poprzedniego menu \n"
+							<< "1. Wykonaj algorytm Brute Force\n"
+							<< "2. Wyswietl wynik\n"
+							<< "3. Wyswietl graf\n"
+							<< "4. Generuj losowy graf\n"
+							<< "5. Laduj graf z pliku\n";
+						std::cin >> userInput;
+						switch (userInput)
+						{
+						case 0:
+							break;
+						case 1:							
+							myBF->intitialBrutForce(myGraph);
+							break;
+						case 2:
+							myBF->printResult();
+							break;
+						case 3:
+							myGraph->printGraph();
+							break;
+						case 4:
+							std::cout << "Podaj rozmiar grafu: ";
+							std::cin >> size;
+							myGraph = new Graph(size);
+							myGraph->createRandomGraph();
+							break;
+						case 5:
+							myGraph->loadGraphFromFile();
+							break;
+						}
+					}
+					userInput = 999;
+					break;
+				case 5:
+					//Dynamic Programing
+					while (userInput != 0) {
+						std::cout << "-------Menu Dynamic Programing------------------\n";
+						std::cout << "Wybierz opcje :\n"
+							<< "0. Wroc do poprzedniego menu \n"
+							<< "1. Wykonaj algorytm Dynamic Programing\n"
+							<< "2. Wyswietl wynik\n"
+							<< "3. Wyswietl graf\n"
+							<< "4. Generuj losowy graf\n"
+							<< "5. Laduj graf z pliku\n";
+						std::cin >> userInput;
+						switch (userInput)
+						{
+						case 0:
+							break;
+						case 1:
+							myDynamicProg->DynamicTSP(myGraph);
+							break;
+						case 2:
+							myDynamicProg->printResult();
+							break;
+						case 3:
+							myGraph->printGraph();
+							break;
+						case 4:
+							std::cout << "Podaj rozmiar grafu: ";
+							std::cin >> size;
+							myGraph = new Graph(size);
+							myGraph->createRandomGraph();
+							break;
+						case 5:
+							myGraph->loadGraphFromFile();
+							break;
+						}
+						
+					}
+					userInput = 999;
+					break;
+				case 6:
+					//Branch and bound
+					while (userInput != 0) {
+						std::cout << "-------Menu Branch And Bound------------------\n";
+						std::cout << "Wybierz opcje :\n"
+							<< "0. Wroc do poprzedniego menu \n"
+							<< "1. Wykonaj algorytm Branch&Bound\n"
+							<< "2. Wyswietl wynik\n"
+							<< "3. Wyswietl graf\n"
+							<< "4. Generuj losowy graf\n"
+							<< "5. Laduj graf z pliku\n";
+						std::cin >> userInput;
+						switch (userInput)
+						{
+						case 0:
+							break;
+						case 1:
+							myBranch2->startAlgorithm(myGraph);
+							break;
+						case 2:
+							myBranch2->printResult();
+							break;
+						case 3:
+							myGraph->printGraph();
+							break;
+						case 4:
+							std::cout << "Podaj rozmiar grafu: ";
+							std::cin >> size;
+							myGraph = new Graph(size);
+							myGraph->createRandomGraph();
+							break;
+						case 5:
+							myGraph->loadGraphFromFile();
+							break;
+						}
+						
+					}
+					userInput = 999;
+					break;
+				}
+			}
+			userInput = 999;
 			break;
 		}
 	}
