@@ -3,6 +3,8 @@
 #include "Graph.h"
 #include "BF.h"
 #include "DynamicProg.h"
+#include "Tabu_Search.h"
+#include "Simulated_Annealing.h"
 
 #include<string>
 #include <iostream>
@@ -86,6 +88,7 @@ void lastTestBranchAndBound() {
 }
 
 void toExcel(std::string fileInputName) {
+	//funkcja ta sluzy jedynie do konwersji notacji uzytej przez biblioteke chrono, na format, bezposrednio obsugiwany z excella bez koniecznosci zmiany ustawien
 	//----------miniProgram---------------------//
 	std::fstream wyniki;
 	std::fstream wynikiCor;
@@ -117,7 +120,7 @@ void toExcel(std::string fileInputName) {
 	//------------------------------------------------
 }
 void bigConvertToExcel() {
-	std::string strTab[14] = { 
+	std::string strTab[1] = { 
 	/*"WynikiBF0.txt",
 	"WynikiBF1.txt" ,
 	"WynikiBF2.txt" ,
@@ -126,23 +129,23 @@ void bigConvertToExcel() {
 	"WynikiBF5.txt" ,
 	"WynikiBF6.txt" ,*/
 
-	"WynikiBNB0.txt" ,
+	/*"WynikiBNB0.txt" ,
 	"WynikiBNB1.txt" ,
 	"WynikiBNB2.txt" ,
 	"WynikiBNB3.txt" ,
 	"WynikiBNB4.txt" ,
 	"WynikiBNB5.txt" ,
-	"WynikiBNB6.txt" ,
+	"WynikiBNB6.txt" ,*/
 
 	"WynikiDynamic0.txt",
-	"WynikiDynamic1.txt",
+	/*"WynikiDynamic1.txt",
 	"WynikiDynamic2.txt",
 	"WynikiDynamic3.txt",
 	"WynikiDynamic4.txt",
 	"WynikiDynamic5.txt",
-	"WynikiDynamic6.txt",
+	"WynikiDynamic6.txt",*/
 	};
-	for (int i = 0; i < 14; i++) {
+	for (int i = 0; i < 1; i++) {
 		toExcel(strTab[i]);
 	}
 }
@@ -182,9 +185,9 @@ void bigSimulationBF() {
 void bigSimulationDynamicProg() {
 	Graph* testGraph = new Graph(10);
 	DynamicProg* testDynamicProg = new DynamicProg();
-	int tab[7] = { 15,16,17,18,19,20,21 };
+	int tab[1] = { 12 };//15,16,17,18,19,20,21
 	int tempProblem = 0;
-	for (int j = 0; j < 7; j++) {
+	for (int j = 0; j < 1; j++) {
 		tempProblem = tab[j];
 		for (int i = 0; i < 100; i++) {
 			testGraph = new Graph(tab[j]);
@@ -254,14 +257,65 @@ int main()
 
 }
 
+void tryToFindBest() {
+	Graph* myGraph = new Graph(10);
+	Tabu_Search* myTabu = new Tabu_Search();
+	int tabx[] = { 0.5,1,2,4,10 };
+	int taby[] = { 2,4,8,16 };
+	
+	int sizes[] = { 20,25,30,40, };
+	for (int iter = 0; iter < 4; iter++) {
+		for (int wieleRazy = 0; wieleRazy < 10; wieleRazy++) {
+			myGraph = new Graph(sizes[iter]);
+			myGraph->createRandomGraph();
+			int best_result = 1 << 30;
+			int bestParB = 0;
+			float bestParC = 0;
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 4; j++) {
+					int result = myTabu->tabuSParam(myGraph, 50, taby[j], tabx[i]);
+					if (result < best_result) {
+						best_result = result;
+						bestParB = taby[j];
+						bestParC = tabx[i];
+					}
+				}
+			}
+			string fileName;
+			//cout << "Podaj nazwe pliku do ktorego chcesz zpaisac graf: ";
+			std::string nazwa = "wynikiParametry";
+			std::string nazwa2 = std::to_string(sizes[iter]);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+			fileName = nazwa;
+			std::fstream graphOutput;
+			graphOutput.open(fileName, ios::app);	//  | ios::app
+			if (graphOutput.good() == true) {
+				//graphOutput << numbOfVerts << endl;
+
+				graphOutput << bestParB << " " << bestParC;
+
+				graphOutput << endl;
+
+				graphOutput.close();
+			}
+		}
+		
+	}
+}
 
 void mainMenu() {
 	Graph *myGraph = new Graph(10);
 	int size = 0;
 	int userInput = 999;
+	int userTemp=100;
 	BF* myBF = new BF();
 	DynamicProg* myDynamicProg = new DynamicProg();
 	Branch2* myBranch2 = new Branch2();
+	Tabu_Search* myTabu = new Tabu_Search();
+	Simulated_Annealing* mySA = new Simulated_Annealing();
+
 
 	while (userInput != 0) {
 		std::cout << "----Main Menu--------------------\n";
@@ -285,13 +339,7 @@ void mainMenu() {
 			//bigSimulationBF();
 			//bigSimulationDynamicProg();
 			//bigSimulationBranchAndBound();
-			BranchAndBoundTest2();
-			BranchAndBoundTest2();
-			BranchAndBoundTest2();
-			BranchAndBoundTest2();
-			BranchAndBoundTest2();
-			BranchAndBoundTest2();
-			BranchAndBoundTest2();
+			//tryToFindBest();
 			std::cout << "koncze wielkie testy!!!!\n";
 			break;
 		case 2:
@@ -304,10 +352,100 @@ void mainMenu() {
 					<< "3. Wyświetl graf\n"
 					<< "4. Przejdz do Brute Force\n"
 					<< "5. Przejdz do Dynamic Programming\n"
-					<< "6. Przejdz do Branch & Bound\n";
+					<< "6. Przejdz do Branch & Bound\n"
+					<< "7. Zmien ustawienia generowania grafu\n"
+					<< "8. Tabu Search\n"
+					<< "9. SA Wyzarzanie\n";
 				std::cin >> userInput;
 				switch (userInput)
 				{
+				case 8:
+					while (userInput != 0) {
+						std::cout << "-------Menu Tabu Search------------------\n";
+						std::cout << "Wybierz opcje :\n"
+							<< "0. Wroc do poprzedniego menu \n"
+							<< "1. Wykonaj algorytm Tabu Search\n"
+							<< "2. Wyswietl wynik\n"
+							<< "3. Wyswietl graf\n"
+							<< "4. Generuj losowy graf\n"
+							<< "5. Laduj graf z pliku\n";
+						std::cin >> userInput;
+						switch (userInput)
+						{
+						case 0:
+							break;
+						case 1:
+							//myBF->intitialBrutForce(myGraph);
+							myTabu->tabuS(myGraph);
+							break;
+						case 2:
+							myTabu->printResult();
+							break;
+						case 3:
+							myGraph->printGraph();
+							break;
+						case 4:
+							std::cout << "Podaj rozmiar grafu: ";
+							std::cin >> size;
+							myGraph = new Graph(size);
+							myGraph->setRandomParam(userTemp);//Universalne generowanie
+							myGraph->createRandomGraph();
+							break;
+						case 5:
+							myGraph->loadGraphFromFile();
+							break;
+						}
+					}
+					userInput = 999;
+					break;
+
+				case 9:
+					//TU UZUUUUUUUPEEEEEEEEEEEEEEEEELNNNNNNNNNNNNNICCCCCCCCCCCCCCCCCCCCCCCCC
+					while (userInput != 0) {
+						std::cout << "-------Menu SA------------------\n";
+						std::cout << "Wybierz opcje :\n"
+							<< "0. Wroc do poprzedniego menu \n"
+							<< "1. Wykonaj algorytm Brute Force\n"
+							<< "2. Wyswietl wynik\n"
+							<< "3. Wyswietl graf\n"
+							<< "4. Generuj losowy graf\n"
+							<< "5. Laduj graf z pliku\n";
+						std::cin >> userInput;
+						switch (userInput)
+						{
+						case 0:
+							break;
+						case 1:
+							//myBF->intitialBrutForce(myGraph);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+							mySA->runAlgorithm(myGraph);
+							break;
+						case 2:
+							mySA->printResult();//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+							break;
+						case 3:
+							myGraph->printGraph();
+							break;
+						case 4:
+							std::cout << "Podaj rozmiar grafu: ";
+							std::cin >> size;
+							myGraph = new Graph(size);
+							myGraph->setRandomParam(userTemp);//Universalne generowanie
+							myGraph->createRandomGraph();
+							break;
+						case 5:
+							myGraph->loadGraphFromFile();
+							break;
+						}
+					}
+					userInput = 999;
+					break;
+				case 7:
+					std::cout << "Zmien generowanie grafu z maxValue:" << userTemp << "\n"
+						<< "Na (ppodaj wartosc): ";
+					userTemp = 0;
+					std::cin >> userTemp;					
+					std::cout << "Pomyslnie ustawiono\n";
+					break;
 				case 0:
 					break;
 				case 1:
@@ -317,6 +455,7 @@ void mainMenu() {
 					std::cout << "Podaj rozmiar grafu: ";
 					std::cin >> size;
 					myGraph = new Graph(size);
+					myGraph->setRandomParam(userTemp);//Universalne generowanie
 					myGraph->createRandomGraph();
 					break;
 				case 3:
@@ -356,11 +495,12 @@ void mainMenu() {
 							std::cout << "Podaj rozmiar grafu: ";
 							std::cin >> size;
 							myGraph = new Graph(size);
+							myGraph->setRandomParam(userTemp);//Universalne generowanie
 							myGraph->createRandomGraph();
 							break;
 						case 5:
 							myGraph->loadGraphFromFile();
-							break;
+							break;						
 						}
 					}
 					userInput = 999;
@@ -394,6 +534,7 @@ void mainMenu() {
 							std::cout << "Podaj rozmiar grafu: ";
 							std::cin >> size;
 							myGraph = new Graph(size);
+							myGraph->setRandomParam(userTemp);//Universalne generowanie
 							myGraph->createRandomGraph();
 							break;
 						case 5:
@@ -433,6 +574,7 @@ void mainMenu() {
 							std::cout << "Podaj rozmiar grafu: ";
 							std::cin >> size;
 							myGraph = new Graph(size);
+							myGraph->setRandomParam(userTemp);//Universalne generowanie
 							myGraph->createRandomGraph();
 							break;
 						case 5:
