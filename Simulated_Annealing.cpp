@@ -18,7 +18,7 @@ void Simulated_Annealing::runAlgorithm(Graph* newGraphData)
 	vector<int> nextPermut;
 	bestResult=permutation;
 	int temperature = 1 << 30;
-	result = 1 << 30;
+	result = 1 << 30;//1 << 30;
 
 	matrixSize = newGraphData->getNumbOfVerts();
 	permutation = makeRandPermut(matrixSize);//punkt startowy(losowy)
@@ -26,7 +26,7 @@ void Simulated_Annealing::runAlgorithm(Graph* newGraphData)
 
 	float COOLING = 0.95;//0.95;
 	int howMany = 150;// ile razy algorytm sie wywola aby uzyskac rozne wyniki	A 10-1000
-	int totalSteps = matrixSize*3;//* 3;//ile sily jeszcze dysponujemy, ilosc krokow jakie jeszcze mozemy robic	B 2-50
+	int totalSteps = matrixSize*4;//* 3;//ile sily jeszcze dysponujemy, ilosc krokow jakie jeszcze mozemy robic	B 2-50
 	//int cadence = matrixSize * 1;//na jak dlugo zostaje zablokowany dany ruch	C 1/4 - 10
 
 	for (int i = 0; i < howMany; ++i) { //wykonania algorytmu
@@ -57,14 +57,14 @@ void Simulated_Annealing::runAlgorithm(Graph* newGraphData)
 				// (Y . . . X), X->Y pol¹cz koniec z poczatkiem aby zamknac cykl
 				costOfPermut += newGraphData->getValueOfEdge(nextPermut[matrixSize - 1], nextPermut[0]);
 
-				int diffrence = result - costOfPermut;//roznica rozwiazan najlepszego i aktualnie rozpatrywanego
-
-				if (diffrence > 0) {
+				//int diffrence = result - costOfPermut;//roznica rozwiazan najlepszego i aktualnie rozpatrywanego
+				int diff = costOfPermut - result;
+				if (result>costOfPermut) {//result>costOfPermut	diffrence > 0
 					result = costOfPermut;
 					bestResult = nextPermut;//przypisz najlepsze rozwiazanie- znalazles teraz
 				}
 				//diffrence > 0 || (diffrence < 0 && exp(diffrence / temperature) >((double)rand() / RAND_MAX) + 1)
-				if (diffrence > 0 || (diffrence < 0 && exp(diffrence / temperature) >((double)rand() / RAND_MAX) + 1)) {//warunek akceptacji
+				if (diff < 0 || (diff > 0 && exp((-1)*diff / temperature) >((double)rand() / RAND_MAX) + 1)) {//warunek akceptacji
 					
 					//jesli znalazles wejscie do lepszego to niech on stanie sie kolejnym punktem rozpatrywania
 					//jesli rozwiazanie jest gorsze, ale temperatura spadla wystarczajaco- godzimy sie zaakceptowac wyjscie ktore niekoniecznie jest najlepsze-zeby tylko isc dalej
@@ -75,18 +75,13 @@ void Simulated_Annealing::runAlgorithm(Graph* newGraphData)
 					swap(nextPermut[firstPos], nextPermut[secondPos]);//cofnij sie, wykonuj dalej
 				}
 
-			}
-
-			
+			}		
 			temperature *= COOLING;
 		}
 
-		temperature = 1<<30;
+		temperature = 1e9;//1<<30;
 		permutation = makeRandPermut(matrixSize);
 	}
-
-	//cout << "Result: " << result<<"\n";
-
 }
 
 int Simulated_Annealing::runAlgorithmParam(Graph* newGraphData, float paramA, float paramB, float paramC)
@@ -94,7 +89,7 @@ int Simulated_Annealing::runAlgorithmParam(Graph* newGraphData, float paramA, fl
 	vector<int> permutation;
 	vector<int> nextPermut;
 	bestResult = permutation;
-	int temperature = 1 << 16;
+	int temperature = 1e9;// 1 << 16;
 	result = 1 << 30;
 
 	matrixSize = newGraphData->getNumbOfVerts();
@@ -156,7 +151,7 @@ int Simulated_Annealing::runAlgorithmParam(Graph* newGraphData, float paramA, fl
 			temperature *= COOLING;
 		}
 
-		temperature = 1 << 16;
+		temperature = 1e9;//1 << 16;
 		permutation = makeRandPermut(matrixSize);
 	}
 

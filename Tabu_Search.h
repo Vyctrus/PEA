@@ -29,6 +29,7 @@ class Tabu_Search
 	
 public:
 	void tabuS(Graph* newGraphData);
+	void tabuStepByStep(Graph* newGraphData);
 	int tabuSParam(Graph* newGraphData, int paramA, int paramB, float paramC);
 	void printResult();
 	//~Tabu_Search();

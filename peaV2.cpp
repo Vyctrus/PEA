@@ -245,6 +245,70 @@ void bigSimulationBranchAndBound() {
 		}
 	}
 }
+
+void bigSimulationSA() {
+	Graph* testGraph = new Graph(10);
+	Simulated_Annealing* testBranch2 = new Simulated_Annealing();
+	int tab[7] = { 17,20,23,26,29,32,35 };
+	int tempProblem = 0;
+	for (int j = 0; j < 7; j++) {
+		tempProblem = tab[j];
+		for (int i = 0; i < 1; i++) {//100
+			testGraph = new Graph(tab[j]);
+			testGraph->createRandomGraph(i);
+			//----
+			auto startTest = std::chrono::high_resolution_clock::now();
+			testBranch2->runAlgorithm(testGraph);
+			auto endTest = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> diff = endTest - startTest;
+			std::fstream wyniki;
+			std::string nazwa = "wynikiSA";
+			std::string nazwa2 = std::to_string(j);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+
+			wyniki.open(nazwa, std::ios::out | std::ios::app);
+			if (wyniki.good() == true) {
+				wyniki << diff.count() << std::endl;
+				wyniki.close();
+			}
+			//----
+		}
+	}
+}
+
+void bigSimulationTabu() {
+	Graph* testGraph = new Graph(10);
+	Tabu_Search* testBranch2 = new Tabu_Search();
+	int tab[7] = { 17,20,23,26,29,32,35 };
+	int tempProblem = 0;
+	for (int j = 0; j < 7; j++) {
+		tempProblem = tab[j];
+		for (int i = 0; i < 10; i++) {//100
+			testGraph = new Graph(tab[j]);
+			testGraph->createRandomGraph(i);
+			//----
+			auto startTest = std::chrono::high_resolution_clock::now();
+			testBranch2->tabuS(testGraph);
+			auto endTest = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> diff = endTest - startTest;
+			std::fstream wyniki;
+			std::string nazwa = "wynikiTS";
+			std::string nazwa2 = std::to_string(j);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+
+			wyniki.open(nazwa, std::ios::out | std::ios::app);
+			if (wyniki.good() == true) {
+				wyniki << diff.count() << std::endl;
+				wyniki.close();
+			}
+			//----
+		}
+	}
+}
 void mainMenu();
 int main()
 {
@@ -391,7 +455,10 @@ void mainMenu() {
 			//bigSimulationDynamicProg();
 			//bigSimulationBranchAndBound();
 			//tryToFindBest();
-			tryToFindBestSA();
+			//tryToFindBestSA();
+			//myTabu->tabuStepByStep(myGraph);
+			bigSimulationSA();
+			bigSimulationTabu();
 			std::cout << "koncze wielkie testy!!!!\n";
 			break;
 		case 2:
