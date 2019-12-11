@@ -16,10 +16,10 @@ class Tabu_Search
 {
 	vector<int> makeRandPermut(int size_of_permutation);
 
-	vector<vector< int > > tabuMatrix;
+	//vector<vector< int > > tabuMatrix;
 	vector<int> bestSolution;
-	vector<int> permutation;
-	vector<int> nextPermut;
+	//vector<int> permutation;
+	//vector<int> nextPermut;
 	int result = 1 << 30;
 
 	int matrixSize=0;

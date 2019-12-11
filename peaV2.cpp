@@ -257,7 +257,7 @@ int main()
 
 }
 
-void tryToFindBest() {
+void tryToFindBestTS() {
 	Graph* myGraph = new Graph(10);
 	Tabu_Search* myTabu = new Tabu_Search();
 	int tabx[] = { 0.5,1,2,4,10 };
@@ -305,6 +305,57 @@ void tryToFindBest() {
 	}
 }
 
+void tryToFindBestSA() {
+
+	//paramA- ile razy wykonac algorytm- powtorzenia
+	//paramB-numb of steps
+	Graph* myGraph = new Graph(10);
+	Simulated_Annealing* mySA = new Simulated_Annealing();
+	float tabx[] = { 0.7,0.9 };//paramC
+	int taby[] = { 3,10 };//paramB
+
+	int sizes[] = { 20,25,30,40, };//Dla podanych rozmiarow problemu
+	for (int iter = 0; iter < 4; iter++) {//sizes size
+		for (int wieleRazy = 0; wieleRazy < 10; wieleRazy++) {//ile razy badać
+			myGraph = new Graph(sizes[iter]);
+			myGraph->createRandomGraph();
+			int best_result = 1 << 30;
+			int bestParB = 0;//paramA chwilowo ustawiony na sztywno
+			float bestParC = 0;
+			for (int i = 0; i < 2; i++) {//tabx size!!!
+				for (int j = 0; j < 2; j++) {//taby size!!!
+					int result = mySA->runAlgorithmParam(myGraph, 60, taby[j], tabx[i]);// graph, paramA, paramB,paramC
+					if (result < best_result) {
+						best_result = result;
+						bestParB = taby[j];
+						bestParC = tabx[i];
+					}
+				}
+			}
+			string fileName;
+			//cout << "Podaj nazwe pliku do ktorego chcesz zpaisac graf: ";
+			std::string nazwa = "wynikiParametry";
+			std::string nazwa2 = std::to_string(sizes[iter]);
+			std::string nazwa3 = ".txt";
+			nazwa.append(nazwa2);
+			nazwa.append(nazwa3);
+			fileName = nazwa;
+			std::fstream graphOutput;
+			graphOutput.open(fileName, ios::app);	//  | ios::app
+			if (graphOutput.good() == true) {
+				//graphOutput << numbOfVerts << endl;
+
+				graphOutput << bestParB << " " << bestParC;
+
+				graphOutput << endl;
+
+				graphOutput.close();
+			}
+		}
+
+	}
+}
+
 void mainMenu() {
 	Graph *myGraph = new Graph(10);
 	int size = 0;
@@ -340,6 +391,7 @@ void mainMenu() {
 			//bigSimulationDynamicProg();
 			//bigSimulationBranchAndBound();
 			//tryToFindBest();
+			tryToFindBestSA();
 			std::cout << "koncze wielkie testy!!!!\n";
 			break;
 		case 2:
@@ -405,7 +457,7 @@ void mainMenu() {
 						std::cout << "-------Menu SA------------------\n";
 						std::cout << "Wybierz opcje :\n"
 							<< "0. Wroc do poprzedniego menu \n"
-							<< "1. Wykonaj algorytm Brute Force\n"
+							<< "1. Wykonaj algorytm SA\n"
 							<< "2. Wyswietl wynik\n"
 							<< "3. Wyswietl graf\n"
 							<< "4. Generuj losowy graf\n"

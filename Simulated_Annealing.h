@@ -16,14 +16,15 @@ class Simulated_Annealing
 	int matrixSize = 0;
 	vector<int> bestResult;
 
-	vector<int> permutation;
-	vector<int> nextPermut;
+	//vector<int> permutation;
+	//vector<int> nextPermut;
 
 	int result = 1 << 30;
-	int temperature = 1 << 16;
+	//int temperature = 1 << 16;
 
 public:
 	void runAlgorithm(Graph* newGraphData);
+	int runAlgorithmParam(Graph* newGraphData, float paramA,float paramB,float paramC);
 	//int TabuSParam(Graph* newGraphData, int paramA, int paramB, float paramC);
 	void printResult();
 	//~Tabu_Search();

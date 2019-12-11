@@ -17,13 +17,21 @@ vector<int> Tabu_Search::makeRandPermut(int size_of_permutation)
 
 void Tabu_Search::tabuS(Graph* newGraphData)
 {
+	vector<vector< int > > tabuMatrix;
+	vector<int> permutation;
+	vector<int> nextPermut;
+	bestSolution=permutation;
+	result = 1 << 30;
+
 	matrixSize= newGraphData->getNumbOfVerts();
 	permutation = makeRandPermut(matrixSize);//utworzenie startowej permutacji
 	nextPermut = vector<int> (permutation);
 
+
+
 	//------------------parametry
 	int howMany = 100;// ile razy algorytm sie wywola aby uzyskac rozne wyniki	A 10-1000
-	int stamina = matrixSize * 10;//ile sily jeszcze dysponujemy, ilosc krokow jakie jeszcze mozemy robic	B 2-50
+	int stamina = matrixSize * 2;//ile sily jeszcze dysponujemy, ilosc krokow jakie jeszcze mozemy robic	B 2-50
 	int cadence = matrixSize * 1;//na jak dlugo zostaje zablokowany dany ruch	C 1/4 - 10
 
 	tabuMatrix.resize(matrixSize);//utworzenie macierzy do przechowywania "zakazanych" ruchow
@@ -92,6 +100,12 @@ void Tabu_Search::tabuS(Graph* newGraphData)
 
 int Tabu_Search::tabuSParam(Graph* newGraphData, int paramA, int paramB, float paramC)
 {
+	vector<vector< int > > tabuMatrix;
+	vector<int> permutation;
+	vector<int> nextPermut;
+	bestSolution = permutation;
+	result = 1 << 30;
+
 	matrixSize = newGraphData->getNumbOfVerts();
 	permutation = makeRandPermut(matrixSize);//utworzenie startowej permutacji
 	nextPermut = vector<int>(permutation);
